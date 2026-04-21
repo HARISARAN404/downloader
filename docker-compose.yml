@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - YTDLP_PATH=yt-dlp
+      - NEXT_PUBLIC_BUYMEACOFFEE_URL=
+      - NEXT_PUBLIC_PAYPAL_URL=
+      - NEXT_PUBLIC_PATREON_URL=
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:

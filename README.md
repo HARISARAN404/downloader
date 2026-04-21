@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BroJustPaste
+
+A fast, beautiful, minimal video downloader that feels premium and effortless to use.
+
+![Dark Mode](https://img.shields.io/badge/theme-dark-000000) ![Light Mode](https://img.shields.io/badge/theme-light-fafafa) ![Next.js](https://img.shields.io/badge/Next.js-16-black) ![yt--dlp](https://img.shields.io/badge/yt--dlp-powered-red)
+
+## Features
+
+- **Instant paste detection** — paste a URL and extraction starts automatically
+- **500+ platforms** — YouTube, Twitter/X, Instagram, TikTok, Facebook, Reddit, and more via yt-dlp
+- **Format picker** — choose between video resolutions and audio-only formats
+- **Streaming downloads** — files are streamed directly, never stored on the server
+- **Dark/light mode** — beautiful in both, dark by default
+- **Mobile-first** — responsive design that works on any device
+- **Rate limiting** — 5 requests/minute per IP (in-memory, swap for Redis in production)
+
+## Tech Stack
+
+| Layer       | Technology                    |
+|-------------|-------------------------------|
+| Framework   | Next.js 16 (App Router)       |
+| Styling     | Tailwind CSS v4               |
+| Animations  | Framer Motion                 |
+| Fonts       | Syne · JetBrains Mono · Inter |
+| Backend     | yt-dlp + ffmpeg (spawned)     |
+| Deployment  | Docker + Nginx                |
+
+## Prerequisites
+
+- **Node.js** 20+
+- **yt-dlp** installed and in PATH (`pip install yt-dlp`)
+- **ffmpeg** installed and in PATH
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Start dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Docker Deployment
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Build and run
+docker compose up --build -d
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# The app will be available at http://localhost:3000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment Variables
 
-## Deploy on Vercel
+| Variable                        | Default     | Description                     |
+|---------------------------------|-------------|---------------------------------|
+| `YTDLP_PATH`                   | `yt-dlp`    | Path to yt-dlp binary          |
+| `NEXT_PUBLIC_BUYMEACOFFEE_URL`  | `#`         | Buy Me a Coffee donation link   |
+| `NEXT_PUBLIC_PAYPAL_URL`        | `#`         | PayPal donation link            |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/
+│   ├── layout.tsx              # Root layout, fonts, SEO metadata
+│   ├── page.tsx                # Main page with state machine
+│   ├── globals.css             # Design system tokens + animations
+│   └── api/
+│       ├── extract/route.ts    # POST: extract video metadata
+│       └── download/route.ts   # GET: stream download
+├── components/
+│   ├── logo.tsx                # Animated logo
+│   ├── url-input.tsx           # Paste-detecting input
+│   ├── loading-skeleton.tsx    # Shimmer loading state
+│   ├── result-card.tsx         # Video info + format picker
+│   ├── download-bar.tsx        # Bottom download notification
+│   ├── theme-toggle.tsx        # Dark/light toggle
+│   ├── platform-icon.tsx       # Platform SVG icons
+│   ├── donation-section.tsx    # Subtle donation links
+│   ├── error-message.tsx       # Error display
+│   └── disclaimer.tsx          # Legal disclaimer
+└── lib/
+    ├── yt-dlp.ts               # yt-dlp spawn helpers
+    ├── platform-detector.ts    # URL → platform detection
+    ├── rate-limiter.ts         # IP-based rate limiting
+    ├── validators.ts           # URL validation
+    └── types.ts                # Shared TypeScript types
+```
+
+## Legal
+
+This tool is for personal and fair-use downloads only. It does not bypass authentication or DRM. No downloaded files are stored on the server. Respect platform terms of service.
+
+## License
+
+MIT

@@ -1,26 +1,201 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ===== Google Fonts are loaded via next/font in layout.tsx ===== */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-hover: var(--card-hover);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-input-bg: var(--input-bg);
+  --color-input-border: var(--input-border);
+  --color-input-focus: var(--input-focus);
+  --color-shimmer-from: var(--shimmer-from);
+  --color-shimmer-via: var(--shimmer-via);
+  --color-shimmer-to: var(--shimmer-to);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+  --font-display: var(--font-syne);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ===== Dark mode (default) ===== */
+:root {
+  --background: #09090b;
+  --foreground: #e4e4e7;
+  --card: #141416;
+  --card-hover: #1a1a1e;
+  --border: #27272a;
+  --muted: #3f3f46;
+  --muted-foreground: #71717a;
+  --accent: #a1a1aa;
+  --accent-foreground: #fafafa;
+  --destructive: #ef4444;
+  --input-bg: #0f0f12;
+  --input-border: #27272a;
+  --input-focus: #52525b;
+  --shimmer-from: #141416;
+  --shimmer-via: #1e1e22;
+  --shimmer-to: #141416;
+  --card-glow: rgba(255, 255, 255, 0.04);
+  --card-glow-strong: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== Light mode ===== */
+.light {
+  --background: #fafafa;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --card-hover: #f4f4f5;
+  --border: #e4e4e7;
+  --muted: #d4d4d8;
+  --muted-foreground: #71717a;
+  --accent: #52525b;
+  --accent-foreground: #18181b;
+  --destructive: #dc2626;
+  --input-bg: #ffffff;
+  --input-border: #d4d4d8;
+  --input-focus: #a1a1aa;
+  --shimmer-from: #f4f4f5;
+  --shimmer-via: #e4e4e7;
+  --shimmer-to: #f4f4f5;
+  --card-glow: rgba(0, 0, 0, 0.04);
+  --card-glow-strong: rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Base ===== */
+* {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Custom Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* ===== Animations ===== */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+@keyframes pulse-border {
+  0%,
+  100% {
+    border-color: var(--input-border);
+  }
+  50% {
+    border-color: var(--input-focus);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--shimmer-from) 0%,
+    var(--shimmer-via) 50%,
+    var(--shimmer-to) 100%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.animate-pulse-border {
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+/* ===== Selection ===== */
+::selection {
+  background: var(--muted);
+  color: var(--accent-foreground);
+}
+
+/* ===== Focus visible ===== */
+:focus-visible {
+  outline: 1px solid var(--input-focus);
+  outline-offset: 2px;
+}
+
+/* ===== Card glow ===== */
+@keyframes card-glow-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px var(--card-glow),
+      0 0 15px 0 var(--card-glow),
+      0 4px 20px -4px rgba(0, 0, 0, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px var(--card-glow-strong),
+      0 0 25px 2px var(--card-glow-strong),
+      0 4px 24px -2px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.card-glow {
+  box-shadow:
+    0 0 0 1px var(--card-glow),
+    0 0 15px 0 var(--card-glow),
+    0 4px 20px -4px rgba(0, 0, 0, 0.15);
+  animation: card-glow-pulse 3s ease-in-out infinite;
 }
