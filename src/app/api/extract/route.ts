@@ -78,6 +78,11 @@ export async function POST(request: NextRequest) {
           code: "PRIVATE_CONTENT",
           status: 403,
         },
+        YOUTUBE_BOT_BLOCKED: {
+          message: "YouTube is blocking this request from our server. Please try again in a moment, or try a different video.",
+          code: "EXTRACTION_FAILED",
+          status: 503,
+        },
         UNSUPPORTED: {
           message: "This URL or platform is not supported.",
           code: "UNSUPPORTED",

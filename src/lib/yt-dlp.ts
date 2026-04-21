@@ -3,7 +3,38 @@ import type { VideoMetadata, VideoFormat } from "./types";
 import { detectPlatform } from "./platform-detector";
 
 const YTDLP_PATH = process.env.YTDLP_PATH || "yt-dlp";
-const EXTRACTION_TIMEOUT = 30000; // 30 seconds
+const EXTRACTION_TIMEOUT = 45000; // 45 seconds (YouTube can be slow from cloud)
+
+// Real browser user-agent to avoid bot detection on YouTube
+const USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
+
+/**
+ * Detect if a URL is a YouTube URL.
+ */
+function isYouTubeUrl(url: string): boolean {
+  return /(?:youtube\.com|youtu\.be|youtube-nocookie\.com)/i.test(url);
+}
+
+/**
+ * Build extra yt-dlp args for YouTube to bypass bot detection on cloud IPs.
+ */
+function getYouTubeArgs(): string[] {
+  const args = [
+    "--user-agent", USER_AGENT,
+    "--geo-bypass",
+    "--extractor-args", "youtube:player_client=mediaconnect",
+    "--no-check-certificates",
+  ];
+
+  // If a cookies file is provided via env, use it
+  const cookiesPath = process.env.YTDLP_COOKIES_FILE;
+  if (cookiesPath) {
+    args.push("--cookies", cookiesPath);
+  }
+
+  return args;
+}
 
 // ---------------------------------------------------------------------------
 // Error classes for structured error handling
@@ -257,11 +288,24 @@ function getBestThumbnail(data: YtDlpOutput): string {
 
 function classifyStderr(stderr: string): string {
   const s = stderr.toLowerCase();
+
+  // YouTube bot detection — "Sign in to confirm you're not a bot"
+  // This is NOT actually private content; it's YouTube blocking cloud IPs.
+  if (
+    s.includes("confirm you're not a bot") ||
+    s.includes("confirm your age") ||
+    s.includes("bot detection") ||
+    s.includes("please sign in") ||
+    (s.includes("sign in") && s.includes("youtube"))
+  ) {
+    return "YOUTUBE_BOT_BLOCKED";
+  }
+
   if (
     s.includes("private video") ||
-    s.includes("sign in") ||
     s.includes("login required") ||
-    s.includes("members-only")
+    s.includes("members-only") ||
+    s.includes("this video is private")
   ) {
     return "PRIVATE_CONTENT";
   }
@@ -278,6 +322,10 @@ function classifyStderr(stderr: string): string {
   if (s.includes("copyright") || s.includes("blocked")) {
     return "BLOCKED";
   }
+  // Generic "sign in" that isn't YouTube bot detection
+  if (s.includes("sign in") || s.includes("login")) {
+    return "PRIVATE_CONTENT";
+  }
   return "EXTRACTION_FAILED";
 }
 
@@ -289,6 +337,8 @@ export async function extractMetadata(url: string): Promise<VideoMetadata> {
   const bin = await resolveBinary();
 
   return new Promise((resolve, reject) => {
+    const youtubeArgs = isYouTubeUrl(url) ? getYouTubeArgs() : [];
+
     const args = [
       ...bin.args,
       "--dump-json",
@@ -296,6 +346,7 @@ export async function extractMetadata(url: string): Promise<VideoMetadata> {
       "--no-warnings",
       "--no-playlist",
       "--flat-playlist",
+      ...youtubeArgs,
       url,
     ];
 
@@ -428,6 +479,8 @@ export async function createDownloadStream(
 ) {
   const bin = await resolveBinary();
 
+  const youtubeArgs = isYouTubeUrl(url) ? getYouTubeArgs() : [];
+
   const args = [
     ...bin.args,
     "-f",
@@ -436,6 +489,7 @@ export async function createDownloadStream(
     "-",
     "--no-warnings",
     "--no-playlist",
+    ...youtubeArgs,
     url,
   ];
 

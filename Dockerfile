@@ -17,9 +17,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Install yt-dlp and ffmpeg
+# Install yt-dlp (latest) and ffmpeg
 RUN apk add --no-cache python3 py3-pip ffmpeg \
-    && pip3 install --break-system-packages yt-dlp
+    && pip3 install --break-system-packages --upgrade yt-dlp \
+    && yt-dlp --version
 
 # Copy standalone build
 COPY --from=builder /app/.next/standalone ./
