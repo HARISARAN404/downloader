@@ -23,6 +23,10 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   title: "BroJustPaste",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+  },
   description:
     "Download videos from YouTube, Twitter, Instagram, TikTok and 500+ platforms. No login, no clutter — just paste and download.",
   keywords: [

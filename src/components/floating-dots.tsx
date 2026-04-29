@@ -27,12 +27,12 @@ export default function FloatingDots() {
       dots.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.18,
-        vy: (Math.random() - 0.5) * 0.18,
+        vx: (Math.random() - 0.5) * 0.45,
+        vy: (Math.random() - 0.5) * 0.45,
         radius: Math.random() * 1.5 + 0.5,
         opacity: Math.random() * 0.3,
         targetOpacity: Math.random() * 0.35 + 0.05,
-        fadeSpeed: Math.random() * 0.003 + 0.001,
+        fadeSpeed: Math.random() * 0.007 + 0.003,
       });
     }
     dotsRef.current = dots;
