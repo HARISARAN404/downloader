@@ -1,15 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="8" fill="#09090b"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
   <defs>
-    <linearGradient id="g" x1="16" y1="5" x2="16" y2="27" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#e4e4e7"/>
-      <stop offset="100%" stop-color="#71717a"/>
+    <!-- iOS squircle clip (same superellipse Apple uses) -->
+    <clipPath id="sq">
+      <rect width="1024" height="1024" rx="224" ry="224"/>
+    </clipPath>
+    <!-- Red-to-rose gradient matching iOS Health/Heart vibe -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FF6B6B"/>
+      <stop offset="100%" stop-color="#E8000D"/>
     </linearGradient>
+    <!-- Subtle inner-glow overlay so it feels glassy -->
+    <radialGradient id="gloss" cx="50%" cy="20%" r="60%">
+      <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <!-- shaft -->
-  <rect x="14.5" y="5" width="3" height="13" rx="1.5" fill="url(#g)"/>
-  <!-- arrowhead -->
-  <path d="M8 17 L16 26 L24 17" stroke="url(#g)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <!-- base line -->
-  <rect x="8" y="27" width="16" height="2.5" rx="1.25" fill="url(#g)"/>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="224" ry="224" fill="url(#bg)"/>
+
+  <!-- White heart centred at 512,480 -->
+  <path
+    d="M512 820
+       C512 820 180 620 180 388
+       C180 280 262 200 360 200
+       C420 200 474 232 512 282
+       C550 232 604 200 664 200
+       C762 200 844 280 844 388
+       C844 620 512 820 512 820 Z"
+    fill="white"
+  />
+
+  <!-- Gloss layer on top -->
+  <rect width="1024" height="1024" rx="224" ry="224" fill="url(#gloss)"/>
 </svg>

@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  turbopack: {
+    // Pin the workspace root to this worktree so Turbopack doesn't
+    // get confused by the parent-directory lockfile at D:\web\package-lock.json
+    root: path.resolve(__dirname),
+  },
   output: "standalone",
   images: {
     remotePatterns: [
