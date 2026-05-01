@@ -1,12 +1,22 @@
 import type { NextConfig } from "next";
 import path from "path";
 
+// Resolve the workspace root dynamically by walking up from the installed
+// `next` package.  next/package.json lives at:
+//   <workspace>/node_modules/next/package.json
+// so two dirname() calls give us <workspace> — wherever node_modules actually
+// is.  This works both in the monorepo root and from any worktree that shares
+// the parent node_modules.
+const workspaceRoot = path.resolve(
+  path.dirname(require.resolve("next/package.json")),
+  "..",
+  ".."
+);
+
 const nextConfig: NextConfig = {
   devIndicators: false,
   turbopack: {
-    // Pin the workspace root to this worktree so Turbopack doesn't
-    // get confused by the parent-directory lockfile at D:\web\package-lock.json
-    root: path.resolve(__dirname),
+    root: workspaceRoot,
   },
   output: "standalone",
   images: {
